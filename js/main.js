@@ -11,9 +11,10 @@ $(document).ready(function(){
     /**
      * Add relevant HTML and hide necessary containers as needed
      */
-    $('#no-students-div').hide();
     addSearch();
     $('<div class="pagination"><ul></ul></div>').insertAfter('.student-list');
+    $('<div id="no-students-div">Sorry there are no students that match :( </div>').insertAfter('.page-header');
+    $('#no-students-div').hide();
 
     /**
      * Set up the page initially and show the first 10 students
@@ -36,7 +37,8 @@ $(document).ready(function(){
      * When any key is tabbed into the search box, or pressing enter on the search button
      * It'll parse through the students and only show those that need to be shown
      */
-    $('#q').keyup(function(){
+    $('#q').on('input', function(){
+        console.log('LOLO');
         var typed_value = $(this).val().toLowerCase();
         query_students($(this).val().toLowerCase(), initial_pages);
     });
@@ -68,7 +70,7 @@ function addPageNumberToStudents(max_pages) {
 
     $('.student-item').each(function(index, element){
         if (!$(element).hasClass('invalid')) {
-            if (counter > 0 && counter % 10 == 0 ) {
+            if (counter > 0 && counter % 10 === 0 ) {
                 page_number++;
             }
             $(element).addClass('page-'+page_number);
@@ -82,8 +84,11 @@ function addPageNumberToStudents(max_pages) {
  */
 function addPagination(page_number) {
     $('.pagination ul').empty();
-    for (var i = 1; i <= page_number; i++) {
-        $('.pagination ul').append('<li><a href="#">' + i + '</a></li>');
+    // Only show pagination if there's more than one page
+    if (page_number > 1) {
+        for (var i = 1; i <= page_number; i++) {
+            $('.pagination ul').append('<li><a href="#">' + i + '</a></li>');
+        }
     }
 }
 
@@ -111,7 +116,7 @@ function showPageItems(page_number) {
 function query_students(typed_value, initial_pages) {
     $('#no-students-div').hide('hide');
     var number_pages = 0;
-    if (typed_value != '') {
+    if (typed_value !== '') {
         // Remove class
         $('.student-item').removeClass('invalid');
         // Go through each student list item, if name or email has part of the string, keep it, otherwise
@@ -131,7 +136,7 @@ function query_students(typed_value, initial_pages) {
         number_pages = initial_pages;
     }
 
-    if (number_pages == 0) {
+    if (number_pages === 0) {
         $('#no-students-div').show();
     }
 
